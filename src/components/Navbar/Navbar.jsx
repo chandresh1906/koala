@@ -1,13 +1,15 @@
 import { ChevronDown, Search, UserCircle2, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductCard from "./productCard"; // Make sure the capitalization matches your file!
+import axios from "axios";
 
 export default function Navbar() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/categories")
-      .then((res) => res.json())
+    axios
+      .get("http://localhost:5000/categories")
+      .then((res) => res.data)
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
