@@ -1,0 +1,44 @@
+{
+  "categories": [
+    {
+      "name": "Living Room",
+      "items": [
+        { "id": 1, "title": "Sofa Beds", "img": "sofa.webp", "discount": "Up to 30% off" },
+        { "id": 2, "title": "Sofas", "img": "soffa.webp", "discount": "Up to 30% off" },
+        { "id": 3, "title": "Ottomans", "img": "ottomans.webp", "discount": "Up to 30% off" },
+        { "id": 4, "title": "Bundles", "img": "Bundles.webp", "discount": "Up to 30% off" },
+        { "id": 5, "title": "Bookshelves", "img": "bookshelves.webp", "discount": "15% off" },
+        { "id": 6, "title": "Coffee & Side Tables", "img": "cofee.webp", "discount": "15% off" },
+        { "id": 7, "title": "Rugs", "img": "rugs.webp", "discount": "Up to 30% off" },
+        { "id": 8, "title": "Armchairs", "img": "armchairs.webp", "discount": "Up to 30% off" }
+      ]
+    },
+    {
+      "name": "Bedroom",
+      "items": [
+        { "id": 9, "title": "Mattresses", "img": "Mattress.webp", "discount": "Up to 30% off" },
+        { "id": 10, "title": "Bed Bases", "img": "BedBases.webp", "discount": "Up to 30% off" },
+        { "id": 11, "title": "Bundles", "img": "Bundle.webp", "discount": "Up to 30% off" },
+        { "id": 12, "title": "Pillows", "img": "Pilows.webp", "discount": "Up to 22% off" },
+        { "id": 13, "title": "Kids", "img": "kids.webp", "discount": "Up to 20% off" },
+        { "id": 14, "title": "Bedside Tables", "img": "Tables.webp", "discount": "15% off" },
+        { "id": 15, "title": "Bed Covers & Sheets", "img": "BedCovers.webp", "discount": "Up to 50% off" },
+        { "id": 16, "title": "Rugs", "img": "rugs.webp", "discount": "Up to 30% off" },
+        { "id": 17, "title": "Mattress Protectors", "img": "protector.webp", "discount": "15% off" },
+        { "id": 18, "title": "Duvets", "img": "duvets.webp", "discount": "Up to 20% off" },
+        { "id": 19, "title": "Bedroom Clearance", "img": "Clearance.webp", "discount": null }
+      ]
+    },
+    {
+      "name": "Outdoor",
+      "items": [
+        { "id": 20, "title": "Outdoor Lounge Sets", "img": "Outdor.png", "discount": "12% off" },
+        { "id": 21, "title": "Outdoor Dining Sets", "img": "outdoor_dining_sets.webp", "discount": "12% off" },
+        { "id": 22, "title": "Outdoor Lounge Chairs", "img": "outdoor_lounge_chairs.webp", "discount": "12% off" },
+        { "id": 23, "title": "Outdoor Coffee Tables", "img": "outdoor_coffee_tables.webp", "discount": "12% off" },
+        { "id": 24, "title": "Outdoor Dining Tables", "img": "outdoor_dining_tables.webp", "discount": "12% off" },
+        { "id": 25, "title": "Outdoor Dining Seating", "img": "outdoor_dining_seating.webp", "discount": "12% off" }
+      ]
+    }
+  ]
+}
