@@ -33,12 +33,26 @@
       "name": "Outdoor",
       "items": [
         { "id": 20, "title": "Outdoor Lounge Sets", "img": "Outdor.png", "discount": "12% off" },
-        { "id": 21, "title": "Outdoor Dining Sets", "img": "outdoor_dining_sets.webp", "discount": "12% off" },
-        { "id": 22, "title": "Outdoor Lounge Chairs", "img": "outdoor_lounge_chairs.webp", "discount": "12% off" },
-        { "id": 23, "title": "Outdoor Coffee Tables", "img": "outdoor_coffee_tables.webp", "discount": "12% off" },
-        { "id": 24, "title": "Outdoor Dining Tables", "img": "outdoor_dining_tables.webp", "discount": "12% off" },
-        { "id": 25, "title": "Outdoor Dining Seating", "img": "outdoor_dining_seating.webp", "discount": "12% off" }
+        { "id": 21, "title": "Outdoor Dining Sets", "img": "dining.webp", "discount": "12% off" },
+        { "id": 22, "title": "Outdoor Lounge Chairs", "img": "Louange.webp", "discount": "12% off" },
+        { "id": 23, "title": "Outdoor Coffee Tables", "img": "coffeetable.webp", "discount": "12% off" },
+        { "id": 24, "title": "Outdoor Dining Tables", "img": "dinning.webp", "discount": "12% off" },
+        { "id": 25, "title": "Outdoor Dining Seating", "img": "seating.webp", "discount": "12% off" }
       ]
     }
+  ],
+  "bluey": [
+    { "id": 26, "title": "Playtime Collection", "img": "playtime.webp", "discount": "20% off" },
+    { "id": 27, "title": "Koala x Bluey Playtime Sofa Bed", "img": "sofabed.webp", "discount": "20% off" },
+    { "id": 28, "title": "Koala x Bluey Snoozytime Mattress", "img": "snoozytime.webp", "discount": "20% off" },
+    { "id": 29, "title": "Koala x Bluey Snoozytime Bed Base", "img": "BLUEY_BED_C_10.webp", "discount": "20% off" },
+    { "id": 30, "title": "Koala x Bluey Snoozytime Pillow", "img": "Pilows.webp", "discount": "12% off" }
+  ],
+
+  "featuredCategories": [
+    { "id": 1, "title": "Living Room", "img": "whitebed.webp", "discount": "Up to 30% off" },
+    { "id": 2, "title": "Bedroom", "img": "brownsofa.webp", "discount": "Up to 30% off" },
+    { "id": 3, "title": "Outdoor", "img": "greenchair.webp", "discount": "12% off" },
+    { "id": 4, "title": "Koala x Bluey", "img": "greenchair.webp", "discount": "Up to 20% off" }
   ]
 }
