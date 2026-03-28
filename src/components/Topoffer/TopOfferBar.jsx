@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function TopOfferBar() {
-  const targetDate = new Date("2026-03-25T23:59:59").getTime();
+  const targetDate = new Date("2026-04-05T23:59:59").getTime();
 
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
   const [aboutOpen, setAboutOpen] = useState(false);

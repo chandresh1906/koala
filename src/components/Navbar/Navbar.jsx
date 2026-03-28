@@ -13,6 +13,7 @@ export default function Navbar() {
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
+  
 
   return (
     <nav className="relative w-full border-b border-[#e5e5e5] bg-[#f8f8f6] z-40">

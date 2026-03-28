@@ -42,11 +42,7 @@
     }
   ],
   "bluey": [
-    { "id": 26, "title": "Playtime Collection", "img": "playtime.webp", "discount": "20% off" },
-    { "id": 27, "title": "Koala x Bluey Playtime Sofa Bed", "img": "sofabed.webp", "discount": "20% off" },
-    { "id": 28, "title": "Koala x Bluey Snoozytime Mattress", "img": "snoozytime.webp", "discount": "20% off" },
-    { "id": 29, "title": "Koala x Bluey Snoozytime Bed Base", "img": "BLUEY_BED_C_10.webp", "discount": "20% off" },
-    { "id": 30, "title": "Koala x Bluey Snoozytime Pillow", "img": "Pilows.webp", "discount": "12% off" }
+    { "id": 26, "title": "Playtime Collection", "img": "playtime.webp", "discount": "20% off" }
   ],
 
   "featuredCategories": [
@@ -54,5 +50,89 @@
     { "id": 2, "title": "Bedroom", "img": "brownsofa.webp", "discount": "Up to 30% off" },
     { "id": 3, "title": "Outdoor", "img": "greenchair.webp", "discount": "12% off" },
     { "id": 4, "title": "Koala x Bluey", "img": "greenchair.webp", "discount": "Up to 20% off" }
+  ],
+
+  "secondaryBanner": {
+    "title": "Innovators of the Modern Sofa Bed",
+    "subtitle": "Effortlessly flip from sofa to bed in seconds with our innovative FlipBed™ design.",
+    "buttonText": "Shop Sofa Beds",
+    "videoUrl": "bannervideo.mp4"
+  }, 
+
+  "features": [
+    {
+      "id": 1,
+      "img": "Washable.webp",
+      "title": "Washable, replaceable covers",
+      "description": "Keep it clean and change up your style."
+    },
+    {
+      "id": 2,
+      "img": "Trial.webp",
+      "title": "Trial products for 120 days",
+      "description": "If it's not right, send it back."
+    },
+    {
+      "id": 3,
+      "img": "Simple.webp",
+      "title": "Simple tool-free assembly",
+      "description": "Slide-and-click for easy setup & moving."
+    },
+    {
+      "id": 4,
+      "img": "kid.webp",
+      "title": "Kid & pet friendly",
+      "description": "With spill and scratch resistant fabrics."
+    }
+  ],
+
+  "modularBanner": {
+    "title": "Lifeproof Modular Sofas",
+    "subtitle": "With washable covers and a tool-free modular design to grow with you.",
+    "buttonText": "Explore Modular Sofas",
+    "videoUrl": "second.mp4",
+    "posterUrl": "modular-poster.jpg"
+  },
+
+  "impacts": [
+    {
+      "id": 1,
+      "img": "koala.webp",
+      "title": "Help us save the koala from extinction",
+      "description": "Your order helps us support koala and wildlife conservation efforts across Australia. To date, we have donated over $4.9 million towards these efforts."
+    },
+    {
+      "id": 2,
+      "img": "for the palnaet.webp",
+      "title": "Giving back to people and planet",
+      "description": "To date we have donated over $23 million in cash and product donations, which includes $10 million as part of our 1% for the Planet commitment."
+    },
+    {
+      "id": 3,
+      "img": "certified.webp",
+      "title": "We're a Certified B Corporation",
+      "description": "We meet the highest standards for social and environmental impact so you can feel good choosing us."
+    }
+  ],
+
+  "footerLogos": [
+    {
+      "id": 1,
+      "img": "logo1.webp",
+      "alt": "Good Design Award Winner"
+    },
+
+    {
+      "id": 2,
+      "img": "logo2.webp",
+      "alt": "Certified B Corporation"
+    },
+
+    {
+      "id": 3,
+      "img": "logo3.webp",
+      "alt": "1% For The Planet"
+    }
   ]
+
 }
