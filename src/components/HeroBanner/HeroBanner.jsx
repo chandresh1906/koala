@@ -93,12 +93,12 @@ export default function HeroBanner() {
       </section>
 
       {/* --- MIDDLE 1: DYNAMIC CATEGORY GRID --- */}
-      <section className="mx-auto w-full max-w-[1400px] px-9 py-16">
+      <section className="mx-auto w-full max-w-[1550px] px-9 py-16">
         <h2 className="text-[32px] md:text-[36px] font-extrabold text-[#2f2e2a] mb-8">
           Furniture loved by millions of homes around the world
         </h2>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {featured.map((item) => (
             <div key={item.id} className="flex flex-col gap-4 cursor-pointer group">
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#e5e5e5]">
@@ -164,7 +164,7 @@ export default function HeroBanner() {
       )}
 
       {/* --- MIDDLE 3: FEATURES GRID --- */}
-      <section className="mx-auto w-full max-w-[1400px] px-9 py-16">
+      <section className="mx-auto w-full max-w-[1550px] px-9 py-16">
         <h2 className="text-[28px] md:text-[36px] font-bold text-[#2f2e2a] mb-8">
           Forward-thinking designs, rewriting the rules for modern homes
         </h2>
@@ -194,7 +194,7 @@ export default function HeroBanner() {
 
       {/* --- MIDDLE 4: SECOND VIDEO BANNER --- */}
       {modularBannerData && (
-        <section className="relative w-full h-[500px] md:h-[650px] bg-gray-200 overflow-hidden">
+        <section className="relative w-full h-500px md:h-650px bg-gray-200 overflow-hidden">
           <video 
             ref={modularVideoRef}
             src={getImageUrl(modularBannerData.videoUrl)}
@@ -235,7 +235,7 @@ export default function HeroBanner() {
       )}
 
       {/* --- BOTTOM: NEW IMPACT / WHY KOALA SECTION --- */}
-      <section className="mx-auto w-full max-w-[1400px] px-9 py-16">
+      <section className="mx-auto w-full max-w-[1500] px-9 py-16">
         
         {/* Section Header */}
         <div className="mb-10">
@@ -253,7 +253,7 @@ export default function HeroBanner() {
             <div key={item.id} className="flex flex-col gap-4 group cursor-pointer">
               
               {/* Image Container */}
-              <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#e5e5e5]">
+              <div className="w-full aspect-4/3 rounded-xl overflow-hidden bg-[#e5e5e5]">
                 <img 
                   src={getImageUrl(item.img)} 
                   alt={item.title} 

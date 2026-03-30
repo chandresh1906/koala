@@ -121,8 +121,30 @@
       "img": "logo1.webp",
       "alt": "Good Design Award Winner"
     }
+  ],
 
-   
+  "cartSuggestions": [
+    {
+      "id": 1,
+      "title": "Mattresses",
+      "image": "Mattress.webp" 
+    },
+    {
+      "id": 2,
+      "title": "Sofa Beds",
+      "image": "sofa.webp"
+    },
+    {
+      "id": 3,
+      "title": "Coffee & Side Tables",
+      "image": "coffeetable.webp"
+    },
+    {
+      "id": 4,
+      "title": "Pillows",
+      "image": "Pilows.webp"
+    }
   ]
+
 
 }
