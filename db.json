@@ -120,19 +120,9 @@
       "id": 1,
       "img": "logo1.webp",
       "alt": "Good Design Award Winner"
-    },
-
-    {
-      "id": 2,
-      "img": "logo2.webp",
-      "alt": "Certified B Corporation"
-    },
-
-    {
-      "id": 3,
-      "img": "logo3.webp",
-      "alt": "1% For The Planet"
     }
+
+   
   ]
 
 }

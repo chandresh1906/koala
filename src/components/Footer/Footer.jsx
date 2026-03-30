@@ -19,7 +19,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-[#6a735c] text-white pt-20 pb-12">
-      <div className="mx-auto w-full max-w-[1440px] px-8 lg:px-12">
+      <div className="mx-auto w-full max-w-[1440] px-8 lg:px-12">
         
         {/* Top Section: Logo, Acknowledgment, and Links Grid */}
         <div className="flex flex-col lg:flex-row justify-between gap-16 mb-24">
@@ -27,7 +27,7 @@ export default function Footer() {
           {/* Left Column: Logo and Acknowledgment */}
           <div className="w-full lg:w-[35%] pr-4">
             <h2 className="text-[44px] font-bold mb-8 tracking-tight leading-none">
-              ko<span className="relative inline-block">a<span className="absolute -top-3 left-1 text-2xl">'</span></span>la<span className="text-sm align-super ml-1 font-normal">®</span>
+              ko<span className="relative inline-block">a<span className="absolute -top-3 left-1 text-2xl"></span></span>la<span className="text-sm align-super ml-1 font-normal">®</span>
             </h2>
             <p className="text-[15px] leading-[1.6] mb-6 font-medium tracking-wide">
               In the spirit of reconciliation, Koala acknowledges the Traditional Custodians of Country throughout Australia and their connections to land, sea and community.
@@ -36,15 +36,15 @@ export default function Footer() {
               We pay our respect to their Elders past and present and extend that respect to all Aboriginal and Torres Strait Islander peoples today.
             </p>
             
-            {/* Social Icons */}
+            {/* Social Icons
             <div className="flex gap-4">
                <div className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center cursor-pointer hover:opacity-80">
                  <span className="font-bold text-xs">f</span>
                </div>
-               <div className="w-6 h-6 border-2 border-white rounded-[6px] flex items-center justify-center cursor-pointer hover:opacity-80">
+               <div className="w-6 h-6 border-2 border-white rounded-[6] flex items-center justify-center cursor-pointer hover:opacity-80">
                  <div className="w-2.5 h-2.5 border-2 border-white rounded-full"></div>
                </div>
-            </div>
+            </div> */}
 
             {/* FIXED: 3 Distinct Logos Row */}
             <div className="flex items-center gap-8 mt-10">
@@ -143,14 +143,6 @@ export default function Footer() {
              <div className="w-10 h-6 bg-white rounded flex items-center justify-center text-[10px] text-indigo-900 font-black italic pr-1">zip</div>
           </div>
 
-          {/* Floating Chat Button */}
-          <button className="absolute right-0 -top-4 w-14 h-14 bg-white rounded-full flex justify-center items-center shadow-lg hover:bg-gray-100 transition z-50 group">
-             <div className="flex gap-1">
-               <span className="w-1.5 h-1.5 bg-[#6a735c] rounded-full"></span>
-               <span className="w-1.5 h-1.5 bg-[#6a735c] rounded-full"></span>
-               <span className="w-1.5 h-1.5 bg-[#6a735c] rounded-full"></span>
-             </div>
-          </button>
           
         </div>
       </div>
