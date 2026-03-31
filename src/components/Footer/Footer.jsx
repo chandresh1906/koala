@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FOOTER_LINKS, LEGAL_LINKS, PAYMENT_METHODS } from './footerConfig';
-
+import API_URL from '../../../Api_path'
 export default function Footer() {
   const [footerLogos, setFooterLogos] = useState([]);
-
+console.log('FooterLogos:', footerLogos); // Debugging log to check the fetched logos
   useEffect(() => {
-    axios.get("http://localhost:5000/footerLogos")
+    axios.get(`${API_URL}/footerLogos`)
       .then((res) => setFooterLogos(res.data))
       .catch((err) => console.error("Error fetching footer logos:", err));
   }, []);
