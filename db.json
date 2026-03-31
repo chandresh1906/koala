@@ -144,7 +144,24 @@
       "title": "Pillows",
       "image": "Pilows.webp"
     }
+  ],
+
+  "livingRoomHero": {
+    "title": "Living Room",
+    "subtitle": "Everything you need to make your living room yours.",
+    "image": "Desktop_Living.webp" 
+  },
+
+  "livingRoomCategories": [
+    { "id": 1, "title": "All Living Room", "image": "allliving_room.webp" },
+    { "id": 2, "title": "Sofa Beds", "image": "sofabeds.webp" },
+    { "id": 3, "title": "Sofas", "image": "Trial.webp" },
+    { "id": 4, "title": "Armchairs", "image": "playtime.webp" },
+    { "id": 5, "title": "Rugs", "image": "Rugs.jpg" },
+    { "id": 6, "title": "Bookshelves", "image": "Book.webp" },
+    { "id": 7, "title": "Coffee & Side Tables", "image": "Coffee.webp" },
+    { "id": 8, "title": "Ottomans", "image": "Otto.webp" },
+    { "id": 9, "title": "Homewares", "image": "Home.webp" },
+    { "id": 10, "title": "Sofa Beds", "image": "sofabeds.webp" }
   ]
-
-
 }

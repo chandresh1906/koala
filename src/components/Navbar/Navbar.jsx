@@ -2,7 +2,8 @@ import { ChevronDown, Search, UserCircle2, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductCard from "./productCard"; 
 import axios from "axios";
-import CartDrawer from "../CartDrawer/CartDrawer"; 
+import CartDrawer from "../CartDrawer/CartDrawer";
+import API_URL from "../../../Api_path"; 
 
 export default function Navbar() {
   const [categories, setCategories] = useState([]);
@@ -10,7 +11,7 @@ export default function Navbar() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/categories")
+      .get(`${API_URL}/categories`)
       .then((res) => res.data)
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error fetching categories:", err));
@@ -18,7 +19,7 @@ export default function Navbar() {
   
   return (
     <> 
-      <nav className="relative w-full border-b border-[#e5e5e5] bg-[#f8f8f6] z-40">
+      <nav className="relative w-full height-[48px] border-b border-[#e5e5e5] bg-[#f8f8f6] z-40">
         <div className="flex w-full items-center justify-between px-8 py-4">
           
           {/* Logo (Left) */}

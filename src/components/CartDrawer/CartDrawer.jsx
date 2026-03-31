@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import axios from "axios";
+import API_URL from "../../../Api_path";
 
 export default function CartDrawer({ isOpen, onClose }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -8,7 +9,7 @@ export default function CartDrawer({ isOpen, onClose }) {
   // Fetch the suggestions from your db.json when the drawer mounts
   useEffect(() => {
     axios
-      .get("http://localhost:5000/cartSuggestions")
+      .get(`${API_URL}/cartSuggestions`)
       .then((res) => setSuggestions(res.data))
       .catch((err) => console.error("Error fetching cart suggestions:", err));
   }, []);

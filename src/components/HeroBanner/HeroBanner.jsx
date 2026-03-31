@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // 1. IMPORT NAVIGATE
+import API_URL from "../../../Api_path";
 
 // Keep your top hero image import
 import bannerImg from "../../assets/APD_Phase2_HPHeroBanner_Static_44871f55-ea10-4b8a-8d38-66dc81352402.webp";
@@ -10,7 +12,7 @@ export default function HeroBanner() {
   const [features, setFeatures] = useState([]);
   const [modularBannerData, setModularBannerData] = useState(null);
   
-  // NEW: State for the Impact section
+  // State for the Impact section
   const [impacts, setImpacts] = useState([]);
   
   // Controls for First Video
@@ -21,34 +23,37 @@ export default function HeroBanner() {
   const [isModularPlaying, setIsModularPlaying] = useState(true);
   const modularVideoRef = useRef(null);
 
+  // 2. INITIALIZE NAVIGATE
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Fetch Categories
     axios
-      .get("http://localhost:5000/featuredCategories")
+      .get(`${API_URL}/featuredCategories`)
       .then((res) => setFeatured(res.data))
       .catch((err) => console.error("Error fetching featured categories:", err));
 
     // Fetch First Video Banner
     axios
-      .get("http://localhost:5000/secondaryBanner")
+      .get(`${API_URL}/secondaryBanner`)
       .then((res) => setBannerData(res.data))
       .catch((err) => console.error("Error fetching banner data:", err));
 
     // Fetch Features Data
     axios
-      .get("http://localhost:5000/features")
+      .get(`${API_URL}/features`)
       .then((res) => setFeatures(res.data))
       .catch((err) => console.error("Error fetching features:", err));
 
     // Fetch Second Video Banner
     axios
-      .get("http://localhost:5000/modularBanner")
+      .get(`${API_URL}/modularBanner`)
       .then((res) => setModularBannerData(res.data))
       .catch((err) => console.error("Error fetching modular banner data:", err));
 
-    // NEW: Fetch Impacts Data
+    // Fetch Impacts Data
     axios
-      .get("http://localhost:5000/impacts")
+      .get(`${API_URL}/impacts`)
       .then((res) => setImpacts(res.data))
       .catch((err) => console.error("Error fetching impacts data:", err));
   }, []);
@@ -100,7 +105,18 @@ export default function HeroBanner() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {featured.map((item) => (
-            <div key={item.id} className="flex flex-col gap-4 cursor-pointer group">
+            <div 
+              key={item.id} 
+              className="flex flex-col gap-4 cursor-pointer group"
+              // 3. ADD ONCLICK EVENT HERE
+              onClick={() => {
+                if (item.title.toLowerCase() === 'living room') {
+                  navigate('/living-room');
+                }
+                // You can add more routes here later, e.g.:
+                // else if (item.title.toLowerCase() === 'bedroom') { navigate('/bedroom'); }
+              }}
+            >
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#e5e5e5]">
                 {item.discount && (
                   <div className="absolute top-4 left-4 bg-[#cbf2d6] text-[#2f2e2a] text-[12px] font-bold px-3 py-1 rounded-full z-10">
@@ -194,7 +210,7 @@ export default function HeroBanner() {
 
       {/* --- MIDDLE 4: SECOND VIDEO BANNER --- */}
       {modularBannerData && (
-        <section className="relative w-full h-500px md:h-650px bg-gray-200 overflow-hidden">
+        <section className="relative w-full h-[500px] md:h-[650px] bg-gray-200 overflow-hidden">
           <video 
             ref={modularVideoRef}
             src={getImageUrl(modularBannerData.videoUrl)}
@@ -235,7 +251,7 @@ export default function HeroBanner() {
       )}
 
       {/* --- BOTTOM: NEW IMPACT / WHY KOALA SECTION --- */}
-      <section className="mx-auto w-full max-w-[1500] px-9 py-16">
+      <section className="mx-auto w-full max-w-[1500px] px-9 py-16">
         
         {/* Section Header */}
         <div className="mb-10">
@@ -253,7 +269,7 @@ export default function HeroBanner() {
             <div key={item.id} className="flex flex-col gap-4 group cursor-pointer">
               
               {/* Image Container */}
-              <div className="w-full aspect-4/3 rounded-xl overflow-hidden bg-[#e5e5e5]">
+              <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#e5e5e5]">
                 <img 
                   src={getImageUrl(item.img)} 
                   alt={item.title} 
