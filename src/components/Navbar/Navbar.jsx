@@ -39,7 +39,7 @@ export default function Navbar() {
 
             {/* Dynamic Categories (Living Room, Bedroom, Outdoor) */}
             {categories.map((cat) => (
-              <div key={cat.name} className="group flex items-center h-[80] -my-[30] cursor-pointer">
+              <div key={cat.name} className="group flex items-center h-[80px] -my-[30px] cursor-pointer">
                 
                 <div className="flex items-center gap-1.5">
                   <span className="group-hover:text-[#69705b] border-b-2 border-transparent group-hover:border-[#69705b] pb-0.5 transition-all">
@@ -89,7 +89,7 @@ export default function Navbar() {
                   <img
                     src="https://au.koala.com/cdn/shop/files/Logo_3.svg?v=1760480610&width=146"
                     alt="Bluey Logo"
-                    className="inline-block w-[65] h-auto -mt-1"
+                    className="inline-block w-[65px] h-auto -mt-1"
                   />
                 </span>
                 <ChevronDown size={16} strokeWidth={2.5} className="group-hover:rotate-180 transition-transform duration-300 text-[#2f2e2a] mt-0.5" />
