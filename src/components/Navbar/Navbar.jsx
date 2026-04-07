@@ -2,15 +2,16 @@ import { ChevronDown, Search, UserCircle2, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductCard from "./productCard"; 
 import axios from "axios";
-import CartDrawer from "../CartDrawer/CartDrawer"; 
+import { useCart } from "../../context/CartContext";
+import API_URL from "../../../Api_path"; 
 
 export default function Navbar() {
   const [categories, setCategories] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false); 
+  const { cartCount, setIsCartOpen } = useCart();
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/categories")
+      .get(`${API_URL}/categories`)
       .then((res) => res.data)
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error fetching categories:", err));
@@ -18,10 +19,9 @@ export default function Navbar() {
   
   return (
     <> 
-      <nav className="relative w-full border-b border-[#e5e5e5] bg-[#f8f8f6] z-40">
+      <nav className="relative w-full height-[48px] border-b border-[#e5e5e5] bg-[#f8f8f6] z-40">
         <div className="flex w-full items-center justify-between px-8 py-4">
           
-          {/* Logo (Left) */}
           <div className="flex items-center cursor-pointer">
             <h1 className="text-[44px] md:text-[50px] leading-none font-extrabold tracking-tight text-[#69705b]">
               koala
@@ -29,15 +29,12 @@ export default function Navbar() {
             <span className="ml-1 mt-5 text-[#69705b] text-xs font-bold">®</span>
           </div>
 
-          {/* Center Links */}
           <div className="hidden lg:flex items-center gap-8 xl:gap-10 text-[16px] font-semibold text-[#2f2e2a] h-full">
             
-            {/* Static: Shop Sale Button */}
             <button className="rounded-full bg-[#cbf2d6] px-5 py-2 text-[14px] font-bold text-[#2f2e2a] hover:bg-[#b5e6c2] transition cursor-pointer">
               Shop Sale
             </button>
 
-            {/* Dynamic Categories (Living Room, Bedroom, Outdoor) */}
             {categories.map((cat) => (
               <div key={cat.name} className="group flex items-center h-[80px] -my-[30px] cursor-pointer">
                 
@@ -52,7 +49,6 @@ export default function Navbar() {
                   />
                 </div>
 
-                {/* Mega Menu Dropdown */}
                 <div className="absolute left-0 top-full w-full bg-[#f8f8f6] border-t border-[#e5e5e5] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                   <div className="w-full px-9 py-10 flex flex-col gap-8">
                     
@@ -65,7 +61,6 @@ export default function Navbar() {
                       </button>
                     </div>
 
-                    {/* Maps to the new ProductCard UI */}
                     <div className="grid grid-cols-7 gap-4 w-full">
                       {cat.items?.map((item) => (
                         <ProductCard
@@ -82,7 +77,6 @@ export default function Navbar() {
               </div>
             ))}
 
-            {/* Static: BLUEY LOGO */}
             <div className="group flex items-center h-[80px] -my-[30px] cursor-pointer">
               <div className="flex items-center gap-1.5 hover:opacity-80 transition">
                 <span className="text-[#5a6fa8] text-[28px] font-extrabold lowercase">
@@ -105,7 +99,6 @@ export default function Navbar() {
                   </div>
 
                   <div className="grid grid-cols-7 gap-4 w-full">
-                    {/* Hardcoded Bluey Item Example using ProductCard */}
                     <ProductCard 
                       title="Playtime Sofa Bed" 
                       img="https://via.placeholder.com/150" 
@@ -118,7 +111,6 @@ export default function Navbar() {
             
           </div>
 
-          {/* Right Side Icons */}
           <div className="flex items-center gap-6 text-[#2f2e2a]">
             <button className="hover:scale-110 transition cursor-pointer">
               <Search size={22} strokeWidth={2} />
@@ -128,16 +120,19 @@ export default function Navbar() {
             </button>
             <button 
               onClick={() => setIsCartOpen(true)} 
-              className="hover:scale-110 transition cursor-pointer"
+              className="relative hover:scale-110 transition cursor-pointer"
             >
               <ShoppingCart size={24} strokeWidth={2} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-[#6e7464] text-white text-[11px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+                  {cartCount}
+                </span>
+              )}
             </button>
           </div>
 
         </div>
       </nav>
-
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 }
