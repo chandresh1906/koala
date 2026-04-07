@@ -41,7 +41,7 @@ export default function TopOfferBar() {
           onMouseEnter={() => setAboutOpen(true)}
           onMouseLeave={() => setAboutOpen(false)}
         >
-          <button className="flex items-center gap-1 font-medium cursor-pointer h-full">
+          <button className="flex items-center gap-1 font-medium cursor-pointer h-full hidden sm:flex">
             <span>About</span>
             {aboutOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
@@ -65,9 +65,9 @@ export default function TopOfferBar() {
 
         {/* Center Countdown */}
         <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 font-medium whitespace-nowrap">
-          <span>Up to 30% off + EXTRA $100 off ends</span>
+          <span className="">Up to 30% off + EXTRA $100 off ends</span>
 
-          <div className="flex items-center gap-1.5">
+          <div className="hidden sm:flex items-center gap-1.5">
             <TimeBox value={timeLeft.days} label="D" />
             <TimeBox value={timeLeft.hours} label="H" />
             <TimeBox value={timeLeft.minutes} label="M" />
@@ -76,7 +76,7 @@ export default function TopOfferBar() {
         </div>
 
         {/* Right Side Links & Country Dropdown */}
-        <div className="absolute right-9 top-0 h-full flex items-center gap-8 font-medium">
+        <div className="absolute right-9 top-0 h-full flex items-center gap-8 font-medium hidden sm:flex ">
           <a href="#" className="hover:text-black transition">FAQs</a>
           <a href="#" className="hover:text-black transition">Trade</a>
           <a href="#" className="hover:text-black transition">Manage my orders</a>
