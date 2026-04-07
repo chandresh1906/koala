@@ -10,6 +10,14 @@ lerna-debug.log*
 node_modules
 .env
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
+yarn-error.log
+yarn-debug.log
+lerna-debug.log
+pnpm-debug.log
+npm-debug.log*
+yarn-error.log*
 dist
 dist-ssr
 *.local
