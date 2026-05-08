@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import TopOfferBar from "../Topoffer/TopOfferBar";
 import Navbar from "../Navbar/Navbar";
@@ -17,13 +17,29 @@ const FILTER_COLORS = [
 
 const FILTER_SIZES = ["1.5 to 2.5-Seater", "3 to 3.5-Seater", "Modular"];
 
+// 1. THE MAP: Tells the page which products belong to which URL
+const CATEGORY_MAP = {
+  "living-room": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 
+  "bedroom": [11, 12, 13, 14, 15], // Add your bedroom IDs here!
+  "outdoor": [21, 22, 23],         // Add your outdoor IDs here!
+  "bluey": [26]
+};
+
 export default function LivingRoom() {
+  // 2. Grab the current category from the URL (e.g., 'bedroom' or 'outdoor')
+  const { mainCategory } = useParams();
+  const activeCategory = mainCategory || 'living-room'; // Default to living room if none provided
+
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   
   // Data States
   const [heroData, setHeroData] = useState(null);
   const [products, setProducts] = useState([]);
+  const [bannerData, setBannerData] = useState(null);
+  const [features, setFeatures] = useState([]);
+  const [modularBannerData, setModularBannerData] = useState(null);
+  const [impacts, setImpacts] = useState([]);
   
   // Filter/Sort States
   const [sortType, setSortType] = useState("Featured");
@@ -32,16 +48,33 @@ export default function LivingRoom() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [openSection, setOpenSection] = useState({ size: false, colour: true, price: false });
-  const [scrollProgress, setScrollProgress] = useState(0);
+  
+  const [isPlaying, setIsPlaying] = useState(true);
+  const videoRef = useRef(null);
+
+  const [isModularPlaying, setIsModularPlaying] = useState(true);
+  const modularVideoRef = useRef(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/livingRoom`).then((res) => setHeroData(res.data));
+    // Convert 'living-room' to 'livingRoom' to match your db.json keys perfectly
+    const dbKey = activeCategory.replace(/-([a-z])/g, g => g[1].toUpperCase());
+
+    // Safely fetch hero data (if it doesn't exist for bedroom yet, it won't crash!)
+    axios.get(`${API_URL}/${dbKey}`).then((res) => setHeroData(res.data)).catch(() => setHeroData(null));
+
+    // Fetch products and filter them dynamically based on the URL
+    const allowedIds = CATEGORY_MAP[activeCategory] || [];
     axios.get(`${API_URL}/products`).then((res) => {
-      // Show all products that belong to categories 1-10 (Living Room)
-      const livingRoomProducts = res.data.filter(p => p.categoryId >= 1 && p.categoryId <= 10);
-      setProducts(livingRoomProducts);
+      setProducts(res.data.filter(p => allowedIds.includes(Number(p.categoryId))));
     });
-  }, []);
+
+    // Fetch global marketing data
+    axios.get(`${API_URL}/secondaryBanner`).then((res) => setBannerData(res.data)).catch(() => {});
+    axios.get(`${API_URL}/features`).then((res) => setFeatures(res.data)).catch(() => {});
+    axios.get(`${API_URL}/modularBanner`).then((res) => setModularBannerData(res.data)).catch(() => {});
+    axios.get(`${API_URL}/impacts`).then((res) => setImpacts(res.data)).catch(() => {});
+
+  }, [activeCategory]); // Re-run everything if the URL changes!
 
   const getImageUrl = (imgString) => {
     if (!imgString) return "";
@@ -49,15 +82,13 @@ export default function LivingRoom() {
     return new URL(`../../assets/${imgString}`, import.meta.url).href;
   };
 
-  // Logic Functions
   const toggleSection = (section) => setOpenSection(prev => ({ ...prev, [section]: !prev[section] }));
   const toggleSize = (size) => setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
   const toggleColour = (colorHex) => setSelectedColours(prev => prev.includes(colorHex) ? prev.filter(c => c !== colorHex) : [...prev, colorHex]);
 
-  // Filtering Logic
   let filteredProducts = products.filter(product => {
     const matchesSize = selectedSizes.length === 0 || selectedSizes.some(size => product.subtitle.includes(size.split(" ")[0]));
-    const hasMatchingVariant = product.variants.some(variant => {
+    const hasMatchingVariant = product.variants && product.variants.some(variant => {
       const matchesColor = selectedColours.length === 0 || selectedColours.includes(variant.hex);
       const isAboveMin = minPrice === "" || variant.price >= parseInt(minPrice);
       const isBelowMax = maxPrice === "" || variant.price <= parseInt(maxPrice);
@@ -66,62 +97,84 @@ export default function LivingRoom() {
     return matchesSize && hasMatchingVariant;
   });
 
-  // Sorting Logic
   if (sortType === "Price, low to high") filteredProducts.sort((a, b) => a.variants[0].price - b.variants[0].price);
   else if (sortType === "Price, high to low") filteredProducts.sort((a, b) => b.variants[0].price - a.variants[0].price);
-  else if (sortType === "Best selling") filteredProducts.sort((a, b) => b.reviewCount - a.reviewCount);
+  else if (sortType === "Best selling") filteredProducts.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
 
-  const highestPrice = products.length > 0 ? Math.max(...products.flatMap(p => p.variants.map(v => v.price))) : 0;
+  const highestPrice = products.length > 0 ? Math.max(...products.flatMap(p => p.variants ? p.variants.map(v => v.price) : [])) : 0;
 
-  if (!heroData) return <div className="min-h-screen bg-[#f8f8f6]">Loading...</div>;
+  const togglePlayPause = () => {
+    if (videoRef.current) {
+      isPlaying ? videoRef.current.pause() : videoRef.current.play();
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleModularPlayPause = () => {
+    if (modularVideoRef.current) {
+      isModularPlaying ? modularVideoRef.current.pause() : modularVideoRef.current.play();
+      setIsModularPlaying(!isModularPlaying);
+    }
+  };
+
+  // Create a nice display name for the title (e.g., 'living-room' -> 'Living Room')
+  const formattedCategoryName = activeCategory.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
   return (
     <div className="w-full flex flex-col min-h-screen bg-[#f8f8f6]">
       <TopOfferBar />
       <Navbar />
 
-      {/* Hero Banner */}
-      <div className="relative w-full h-[400px] md:h-[550px]">
-        <img src={getImageUrl(heroData.image)} alt={heroData.title} className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-        <div className="absolute bottom-10 left-8 md:left-12 z-10">
-          <h1 className="text-white text-[40px] md:text-[56px] font-bold">{heroData.title}</h1>
-          <p className="text-white text-[18px]">{heroData.subtitle}</p>
+      {/* Hero Banner (Only shows if data exists in db.json for this category) */}
+      {heroData ? (
+        <div className="relative w-full h-[400px] md:h-[550px]">
+          <img src={getImageUrl(heroData.image)} alt={heroData.title} className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          <div className="absolute bottom-10 left-8 md:left-12 z-10">
+            <h1 className="text-white text-[40px] md:text-[56px] font-bold">{heroData.title}</h1>
+            <p className="text-white text-[18px]">{heroData.subtitle}</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="w-full h-[200px] bg-[#69705b] flex items-center justify-center">
+          <h1 className="text-white text-[40px] md:text-[56px] font-bold">{formattedCategoryName}</h1>
+        </div>
+      )}
 
       <div className="w-full max-w-[1550px] mx-auto px-9">
-        {/* Breadcrumbs */}
+        {/* Dynamic Breadcrumbs */}
         <div className="py-6 text-[14px]">
           <Link to="/" className="text-gray-500 hover:underline">Home</Link>
           <span className="mx-3 text-gray-400">/</span>
-          <span className="text-[#2f2e2a] font-bold">Living Room</span>
+          <span className="text-[#2f2e2a] font-bold">{formattedCategoryName}</span>
         </div>
 
-        {/* Category Slider */}
-        <section className="pb-12">
-          <div ref={scrollContainerRef} className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar">
-            {heroData.categories?.map((cat) => (
-              <div key={cat.id} onClick={() => navigate(`/living-room/${cat.title.toLowerCase().replace(/ /g, '-')}`)} className="flex-shrink-0 w-[240px] cursor-pointer group">
-                <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-200">
-                  <img src={getImageUrl(cat.image)} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+        {/* Category Slider (Only shows if heroData has sub-categories) */}
+        {heroData && heroData.categories && (
+          <section className="pb-12">
+            <div ref={scrollContainerRef} className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar">
+              {heroData.categories.map((cat) => (
+                <div key={cat.id} onClick={() => navigate(`/${activeCategory}/${cat.title.toLowerCase().replace(/ /g, '-')}`)} className="flex-shrink-0 w-[240px] cursor-pointer group">
+                  <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-200 bg-white">
+                    <img src={getImageUrl(cat.image)} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  </div>
+                  <h3 className="mt-2 font-bold text-[#2f2e2a]">{cat.title}</h3>
                 </div>
-                <h3 className="mt-2 font-bold text-[#2f2e2a]">{cat.title}</h3>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Sort Dropdown */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-[24px] font-extrabold text-[#2f2e2a]">All Living Room</h2>
+        <div className="flex justify-between items-center mb-6 mt-4">
+          <h2 className="text-[24px] font-extrabold text-[#2f2e2a]">All {formattedCategoryName}</h2>
           <div className="flex items-center gap-3">
             <span className="text-[14px] text-gray-500">Sort by:</span>
             <div className="relative border border-gray-300 bg-white rounded-md w-[200px]">
               <select value={sortType} onChange={(e) => setSortType(e.target.value)} className="w-full appearance-none bg-transparent py-2 px-4 text-[14px] font-bold outline-none cursor-pointer">
                 <option>Featured</option><option>Best selling</option><option>Price, low to high</option><option>Price, high to low</option>
               </select>
-              <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" />
+              <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
             </div>
           </div>
         </div>
@@ -183,9 +236,11 @@ export default function LivingRoom() {
 
           {/* Product Grid */}
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
-            {filteredProducts.map(product => (
-              <ComplexProductCard key={product.id} product={product} />
-            ))}
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map(product => <ComplexProductCard key={product.id} product={product} />)
+            ) : (
+              <div className="col-span-full py-10 text-gray-500 text-lg">No products match your filters.</div>
+            )}
           </div>
         </div>
       </div>

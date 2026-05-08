@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '../../context/CurrencyContext';
 
 export default function ComplexProductCard({ product }) {
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [currentImgIdx, setCurrentImgIdx] = useState(0);
+  
+  // 1. Grab the formatPrice function from your new context
+  const { formatPrice } = useCurrency();
 
   const variant = product.variants[selectedVariantIdx];
   const images = variant?.images || [];
@@ -84,8 +88,9 @@ export default function ComplexProductCard({ product }) {
         <h3 className="text-[16px] font-bold text-[#2f2e2a] mt-1">{product.title}</h3>
         <p className="text-[14px] text-gray-500">{product.subtitle}</p>
 
+        {/* 2. THE UPGRADE: Uses global formatPrice function instead of hardcoding $ */}
         <div className="text-[15px] font-medium text-[#2f2e2a] mt-2">
-          From ${variant?.price.toLocaleString()}
+          From {variant?.price ? formatPrice(variant.price) : ''}
         </div>
 
         <div className="flex items-center gap-2 mt-3 flex-wrap">

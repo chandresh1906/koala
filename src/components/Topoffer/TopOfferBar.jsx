@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useCurrency } from "../../context/CurrencyContext";
+
+// Create a mapping of currencies to their flags and names
+const COUNTRY_INFO = {
+  AUD: { flag: "https://flagcdn.com/w40/au.png", name: "Australia" },
+  USD: { flag: "https://flagcdn.com/w40/us.png", name: "United States" },
+  JPY: { flag: "https://flagcdn.com/w40/jp.png", name: "Japan" }
+};
 
 export default function TopOfferBar() {
-  const targetDate = new Date("2026-04-05T23:59:59").getTime();
+  const targetDate = new Date("2026-04-10T23:59:59").getTime();
 
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
   const [aboutOpen, setAboutOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
+  
+  // Grab BOTH currency and setCurrency from our context
+  const { currency, setCurrency } = useCurrency();
 
   function getTimeLeft() {
     const now = new Date().getTime();
@@ -31,6 +42,11 @@ export default function TopOfferBar() {
     return () => clearInterval(timer);
   }, []);
 
+  const handleCurrencyChange = (currencyCode) => {
+    setCurrency(currencyCode);
+    setCountryOpen(false); 
+  };
+
   return (
     <div className="w-full bg-[#c8e8c9] text-[#4c4b3f] text-sm relative z-50">
       <div className="relative flex h-[3.25rem] items-center px-4 sm:px-9 justify-between">
@@ -41,7 +57,7 @@ export default function TopOfferBar() {
           onMouseEnter={() => setAboutOpen(true)}
           onMouseLeave={() => setAboutOpen(false)}
         >
-          <button className="flex items-center gap-1 font-medium cursor-pointer h-full hidden sm:flex">
+          <button className="flex items-center gap-1 font-medium cursor-pointer h-full">
             <span>About</span>
             {aboutOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
@@ -114,7 +130,7 @@ function TimeBox({ value, label }) {
       <div className="rounded-sm bg-white px-2.5 py-1 leading-none font-semibold text-[#1f1f1b]">
         <AnimatedDigit value={value} />
       </div>
-      <span className="text-sm font-semibold text-[#1f1f1b]">{label}</span>
+      <span className="text-xs md:text-sm font-semibold text-[#1f1f1b]">{label}</span>
     </div>
   );
 }
@@ -148,7 +164,7 @@ function AnimatedDigit({ value }) {
   );
 }
 
-function CountryItem({ flag, country, currency }) {
+function CountryItem({ flag, country, currency, onClick }) {
   return (
     <div className="flex cursor-pointer items-center justify-between border-b border-[#f1f1eb] px-5 py-3 hover:bg-[#f7f7f3] last:border-b-0">
       <div className="flex items-center gap-3">
