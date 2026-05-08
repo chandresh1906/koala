@@ -14,7 +14,7 @@ export default function Navbar() {
 
   const [categories, setCategories] = useState([]);
   const { cartCount, setIsCartOpen } = useCart();
-  const navigate = useNavigate(); 
+
   
   const [activeMenu, setActiveMenu] = useState(null);
 
