@@ -1,18 +1,25 @@
+import { useNavigate } from "react-router-dom";
 import { ChevronDown, Search, UserCircle2, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+
 import ProductCard from "./productCard"; 
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
 import API_URL from "../../../Api_path"; 
 
+
 export default function Navbar() {
+
+  const navigate = useNavigate();
+
   const [categories, setCategories] = useState([]);
   const { cartCount, setIsCartOpen } = useCart();
   const navigate = useNavigate(); 
   
   const [activeMenu, setActiveMenu] = useState(null);
 
+
+  // ✅ Fetch categories
   useEffect(() => {
     // Fetch BOTH Categories and Products at the same time
     Promise.all([
@@ -61,10 +68,12 @@ export default function Navbar() {
           
           <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
             <h1 className="text-[44px] md:text-[50px] leading-none font-extrabold tracking-tight text-[#69705b]">
+
               koala
             </h1>
             <span className="ml-1 mt-5 text-[#69705b] text-xs font-bold">®</span>
           </div>
+
 
           <div className="hidden lg:flex items-center gap-8 xl:gap-10 text-[16px] font-semibold text-[#2f2e2a] h-full">
             
@@ -201,5 +210,6 @@ export default function Navbar() {
         </div>
       </nav>
     </>
+
   );
 }

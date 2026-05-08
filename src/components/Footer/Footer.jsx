@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+
 import axios from 'axios';
 import { FOOTER_LINKS, LEGAL_LINKS, PAYMENT_METHODS } from './footerConfig';
-import API_URL from '../../../Api_path';
+import API_URL from '../../../Api_path'
 
 export default function Footer() {
   const [footerLogos, setFooterLogos] = useState([]);

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home"; 
@@ -7,6 +8,7 @@ import ProductDetails from "./components/Products/ProductDetails";
 import { CartProvider } from "./context/CartContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import CartDrawer from "./components/CartDrawer/CartDrawer"; 
+
 
 export default function App() {
   return (

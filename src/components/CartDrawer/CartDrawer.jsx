@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { X, Plus, Minus, Trash2, ArrowLeft, CreditCard, CheckCircle, Loader2, Lock, Smartphone, Landmark, Mail, MessageSquare } from "lucide-react";
+
+import { X, Plus, Minus, Trash2 } from "lucide-react";
 import axios from "axios";
 import API_URL from "../../../Api_path";
 import { useCart } from "../../context/CartContext";
@@ -39,6 +40,7 @@ export default function CartDrawer() {
   const getImageUrl = (imgString) => {
     if (!imgString) return '';
     if (imgString.startsWith('http')) return imgString;
+
     return new URL(`../../assets/${imgString}`, import.meta.url).href;
   };
 
@@ -112,21 +114,27 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        {/* ------------------------------- */}
-        {/* VIEW 1: THE CART                */}
-        {/* ------------------------------- */}
-        {viewState === 'cart' && (
-           <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
-              {cart.length === 0 ? (
-                <div className="grid grid-cols-2 gap-x-4 gap-y-8 mt-2">
-                  {suggestions.map((item) => (
-                    <div key={item.id} className="flex flex-col gap-3 group cursor-pointer">
-                      <div className="w-full aspect-[4/3] bg-white rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-sm border border-gray-100">
-                        <img src={getImageUrl(item.image)} alt={item.title} className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply" />
-                      </div>
-                      <h3 className="text-[15px] font-semibold text-[#2f2e2a] text-center">{item.title}</h3>
-                    </div>
-                  ))}
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+          
+          {cart.length === 0 ? (
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 mt-2">
+              {suggestions.map((item) => (
+                <div key={item.id} className="flex flex-col gap-3 group cursor-pointer">
+                  <div className="w-full aspect-[4/3] bg-white rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-sm border border-gray-100">
+                    <img src={getImageUrl(item.image)} alt={item.title} className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply" />
+                  </div>
+                  <h3 className="text-[15px] font-semibold text-[#2f2e2a] text-center">{item.title}</h3>
+
+                </div>
+              ))}
+            </div>
+          ) : (
+
+            cart.map((item, idx) => (
+              <div key={idx} className="flex gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="w-20 h-20 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
+                  <img src={getImageUrl(item.image)} alt={item.title} className="w-full h-full object-cover p-2" />
                 </div>
               ) : (
                 cart.map((item, idx) => (
@@ -169,130 +177,6 @@ export default function CartDrawer() {
             >
               <Lock size={18} /> Checkout safely
             </button>
-          </div>
-        )}
-
-        {/* ------------------------------- */}
-        {/* VIEW 2: CHECKOUT FORM           */}
-        {/* ------------------------------- */}
-        {viewState === 'checkout' && (
-          <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-white">
-            <form onSubmit={handleRequestOTP} className="flex flex-col flex-1 gap-5">
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Email for Receipt</label>
-                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className="w-full border border-gray-300 rounded-md p-3 outline-none focus:border-[#6e7464] focus:ring-1 focus:ring-[#6e7464]" />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Mobile for OTP</label>
-                  <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 99999 99999" className="w-full border border-gray-300 rounded-md p-3 outline-none focus:border-[#6e7464] focus:ring-1 focus:ring-[#6e7464]" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Select Payment Method</label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button type="button" onClick={() => setPaymentMethod('card')} className={`flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all ${paymentMethod === 'card' ? 'border-[#6e7464] bg-[#f0f4eb] text-[#6e7464]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
-                    <CreditCard size={24} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Card</span>
-                  </button>
-                  <button type="button" onClick={() => setPaymentMethod('upi')} className={`flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all ${paymentMethod === 'upi' ? 'border-[#6e7464] bg-[#f0f4eb] text-[#6e7464]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
-                    <Smartphone size={24} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">UPI / GPay</span>
-                  </button>
-                  <button type="button" onClick={() => setPaymentMethod('netbanking')} className={`flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all ${paymentMethod === 'netbanking' ? 'border-[#6e7464] bg-[#f0f4eb] text-[#6e7464]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
-                    <Landmark size={24} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Banking</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Minimal Dummy Inputs just to fill space visually */}
-              {paymentMethod === 'card' && (
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Card Information</label>
-                  <input type="text" required maxLength="19" placeholder="0000 0000 0000 0000" className="w-full border border-gray-300 rounded-md p-3 outline-none" />
-                </div>
-              )}
-              {paymentMethod === 'upi' && (
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Enter UPI ID</label>
-                  <input type="text" required placeholder="username@okhdfcbank" className="w-full border border-gray-300 rounded-md p-3 outline-none" />
-                </div>
-              )}
-
-              <div className="mt-auto border-t border-gray-200 pt-6">
-                <button type="submit" className="w-full flex justify-center items-center gap-2 bg-[#2f2e2a] text-white font-bold text-[16px] py-4 rounded-md hover:bg-black transition-colors shadow-md">
-                  <MessageSquare size={18} /> Send OTP & Pay ${cartTotal.toLocaleString()}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* ------------------------------- */}
-        {/* VIEW 3: OTP VERIFICATION        */}
-        {/* ------------------------------- */}
-        {viewState === 'otp' && (
-          <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-white animate-in fade-in duration-300">
-            <div className="flex flex-col items-center text-center mt-10 mb-8">
-              <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-4">
-                <Smartphone size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Verify your Payment</h3>
-              <p className="text-sm text-gray-500">We've sent a one-time password to <br/><span className="font-bold text-gray-800">{phone || 'your mobile'}</span></p>
-              <p className="text-xs text-blue-600 mt-2 font-bold bg-blue-50 px-3 py-1 rounded-full">For testing, type: 1234</p>
-            </div>
-
-            <form onSubmit={handleVerifyOTP} className="flex flex-col gap-6 w-full max-w-xs mx-auto">
-              <div>
-                <input 
-                  type="text" 
-                  maxLength="4" 
-                  required 
-                  value={otpInput}
-                  onChange={e => setOtpInput(e.target.value)}
-                  placeholder="• • • •" 
-                  className={`w-full text-center text-3xl tracking-[1em] border-b-2 bg-transparent p-3 outline-none transition-colors ${otpError ? 'border-red-500 text-red-500' : 'border-gray-300 focus:border-[#6e7464]'}`} 
-                />
-                {otpError && <p className="text-red-500 text-xs text-center mt-2 font-bold">Invalid OTP. Please try "1234".</p>}
-              </div>
-
-              <button type="submit" className="w-full flex justify-center items-center gap-2 bg-[#6e7464] text-white font-bold text-[16px] py-4 rounded-md hover:bg-[#5a5f52] transition-colors shadow-md mt-4">
-                Verify & Complete Order
-              </button>
-            </form>
-          </div>
-        )}
-
-        {/* ------------------------------- */}
-        {/* VIEW 4: PROCESSING & SUCCESS    */}
-        {/* ------------------------------- */}
-        {(viewState === 'processing_otp' || viewState === 'verifying' || viewState === 'success') && (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white">
-            {viewState === 'processing_otp' && (
-              <div className="flex flex-col items-center gap-4 text-blue-600">
-                <Loader2 size={64} className="animate-spin" />
-                <h3 className="text-xl font-bold text-gray-800">Sending OTP...</h3>
-              </div>
-            )}
-            
-            {viewState === 'verifying' && (
-              <div className="flex flex-col items-center gap-4 text-[#6e7464]">
-                <Loader2 size={64} className="animate-spin" />
-                <h3 className="text-xl font-bold text-gray-800">Verifying Payment...</h3>
-                <p className="text-gray-500 text-center">Do not close this window.</p>
-              </div>
-            )}
-
-            {viewState === 'success' && (
-              <div className="flex flex-col items-center gap-4 text-green-600 animate-in fade-in zoom-in duration-500">
-                <CheckCircle size={80} />
-                <h3 className="text-2xl font-bold text-gray-800">Payment Successful!</h3>
-                <p className="text-gray-500 text-center">Receipt sent to <b>{email}</b><br/>Order updates sent to <b>{phone}</b></p>
-              </div>
-            )}
           </div>
         )}
 
