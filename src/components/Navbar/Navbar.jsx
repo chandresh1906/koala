@@ -11,15 +11,47 @@ export default function Navbar() {
   const { cartCount, setIsCartOpen } = useCart();
   const navigate = useNavigate(); 
   
-  // THE FIX: React state to control which menu is open
   const [activeMenu, setActiveMenu] = useState(null);
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}/categories`)
-      .then((res) => res.data)
-      .then((data) => setCategories(data))
-      .catch((err) => console.error("Error fetching categories:", err));
+    // Fetch BOTH Categories and Products at the same time
+    Promise.all([
+      axios.get(`${API_URL}/categories`),
+      axios.get(`${API_URL}/products`)
+    ])
+    .then(([catRes, prodRes]) => {
+      const fetchedCategories = catRes.data;
+      const fetchedProducts = prodRes.data;
+
+      const combinedData = fetchedCategories.map(cat => {
+        // Clean up the name so we can check it safely
+        const displayName = (cat.categoryName || cat.name || "Unknown").trim();
+        const isLivingRoom = displayName.toLowerCase() === "living room";
+
+        const matchingProducts = fetchedProducts.filter(p => {
+          const catIdString = String(cat.id);
+          const pCatIdNumber = Number(p.categoryId);
+          
+          // THE BULLETPROOF FIX: Check if the category is named "Living Room"
+          // If it is, forcefully grab products 1 through 10, completely ignoring that weird ID!
+          if (isLivingRoom && pCatIdNumber >= 1 && pCatIdNumber <= 10) {
+            return true;
+          }
+          
+          // Standard match for new products you add in the Admin Panel
+          return String(p.categoryId) === catIdString;
+        });
+        
+        return {
+          ...cat,
+          // Limit to 7 items so your CSS grid doesn't break
+          items: matchingProducts.slice(0, 7) 
+        };
+      });
+
+      setCategories(combinedData);
+    })
+    .catch((err) => console.error("Error fetching navbar data:", err));
   }, []);
   
   return (
@@ -39,21 +71,22 @@ export default function Navbar() {
             <button className="rounded-full bg-[#cbf2d6] px-5 py-2 text-[14px] font-bold text-[#2f2e2a] hover:bg-[#b5e6c2] transition cursor-pointer">
               Shop Sale
             </button>
-
+            
             {categories.map((cat) => {
-              const parentSlug = cat.name.toLowerCase().replace(/ /g, "-");
+              const displayName = (cat.categoryName || cat.name || "Unknown").trim();
+              const parentSlug = displayName.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-");
 
               return (
                 <div 
-                  key={cat.name} 
+                  key={cat.id || displayName}
                   className="group flex items-center h-[80px] -my-[30px] cursor-pointer"
-                  onMouseEnter={() => setActiveMenu(cat.name)}
+                  onMouseEnter={() => setActiveMenu(displayName)}
                   onMouseLeave={() => setActiveMenu(null)}
                 >
                   
                   <div className="flex items-center gap-1.5" onClick={() => { setActiveMenu(null); navigate(`/${parentSlug}`); }}>
                     <span className="group-hover:text-[#69705b] border-b-2 border-transparent group-hover:border-[#69705b] pb-0.5 transition-all">
-                      {cat.name}
+                      {displayName}
                     </span>
                     <ChevronDown
                       size={16}
@@ -62,34 +95,36 @@ export default function Navbar() {
                     />
                   </div>
 
-                  {/* Replaced group-hover with dynamic React State logic */}
-                  <div className={`absolute left-0 top-full w-full bg-[#f8f8f6] border-t border-[#e5e5e5] shadow-xl transition-all duration-300 ${activeMenu === cat.name ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                  <div className={`absolute left-0 top-full w-full bg-[#f8f8f6] border-t border-[#e5e5e5] shadow-xl transition-all duration-300 ${activeMenu === displayName ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                     <div className="w-full px-9 py-10 flex flex-col gap-8">
                       
                       <div className="flex justify-between items-center w-full">
                         <h2 className="text-[32px] font-extrabold text-[#2f2e2a]">
-                          {cat.name}
+                          {displayName}
                         </h2>
                         <button 
                           onClick={() => { setActiveMenu(null); navigate(`/${parentSlug}`); }}
                           className="rounded-full bg-[#69705b] px-6 py-3 text-[15px] font-bold text-white hover:bg-[#525845] transition"
                         >
-                          Shop all {cat.name.toLowerCase()}
+                          Shop all {displayName.toLowerCase()}
                         </button>
                       </div>
 
                       <div className="grid grid-cols-7 gap-4 w-full">
-                        {cat.items?.map((item) => {
-                          const itemSlug = item.title.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-");
-
+                        {/* It will now successfully loop through the combined items! */}
+                        {(cat.items || []).map((item) => {
+                          const itemTitle = item.title || item.productName || "Unknown";
+                          const itemImg = item.img || item.image || (item.variants && item.variants[0] ? item.variants[0].images[0] : "");
+                          const itemSlug = itemTitle.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-");
+                          
                           return (
                             <ProductCard
                               key={item.id}
-                              title={item.title}
-                              img={item.img}
-                              discount={item.discount}
+                              title={itemTitle}
+                              img={itemImg}
+                              discount={item.discount || item.badge}
                               onClick={() => { 
-                                setActiveMenu(null); // Forces the menu closed immediately!
+                                setActiveMenu(null); 
                                 navigate(`/${parentSlug}/${itemSlug}`); 
                               }}
                             />

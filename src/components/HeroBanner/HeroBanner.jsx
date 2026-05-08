@@ -7,6 +7,7 @@ import bannerImg from "../../assets/APD_Phase2_HPHeroBanner_Static_44871f55-ea10
 
 export default function HeroBanner() {
   const [featured, setFeatured] = useState([]);
+  console.log('Featured categories:', featured); // Debugging log
   const [bannerData, setBannerData] = useState(null);
   const [features, setFeatures] = useState([]);
   const [modularBannerData, setModularBannerData] = useState(null);
@@ -21,14 +22,23 @@ export default function HeroBanner() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${API_URL}/featuredCategories`).then((res) => setFeatured(res.data));
+    // We fetch all the data for the homepage here
+    axios.get(`${API_URL}/categories`).then((res) => setFeatured(res.data));
     axios.get(`${API_URL}/secondaryBanner`).then((res) => setBannerData(res.data));
     axios.get(`${API_URL}/features`).then((res) => setFeatures(res.data));
     axios.get(`${API_URL}/modularBanner`).then((res) => setModularBannerData(res.data));
     axios.get(`${API_URL}/impacts`).then((res) => setImpacts(res.data));
   }, []);
 
-  const getImageUrl = (fileName) => fileName ? new URL(`../../assets/${fileName}`, import.meta.url).href : '';
+  const getImageUrl = (fileName) => {
+    if (!fileName) return '';
+    if (fileName.startsWith('http') || fileName.startsWith('data:image')) return fileName;
+    try {
+      return new URL(`../../assets/${fileName}`, import.meta.url).href;
+    } catch(e) {
+      return '';
+    }
+  };
 
   const togglePlayPause = () => {
     if (videoRef.current) {
@@ -58,25 +68,42 @@ export default function HeroBanner() {
           Furniture loved by millions of homes around the world
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {featured.map((item) => (
-            <div 
-              key={item.id} 
-              className="flex flex-col gap-3 md:gap-4 cursor-pointer group"
-              onClick={() => {
-                if (item.title.toLowerCase() === 'living room') navigate('/living-room');
-              }}
-            >
-              <div className="relative w-full aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-[#e5e5e5]">
-                {item.discount && (
-                  <div className="absolute top-3 left-3 bg-[#cbf2d6] text-[#2f2e2a] text-[10px] md:text-[12px] font-bold px-2 md:px-3 py-1 rounded-full z-10">
-                    {item.discount}
-                  </div>
-                )}
-                <img src={getImageUrl(item.img)} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          {featured.map((item) => {
+            // THE FIX: Safe extraction for old and new DB structures
+            const catName = item.categoryName || item.name || item.title || "Unknown";
+            const catImage = item.categoryImage || item.img || "";
+
+            return (
+              <div 
+                key={item.id} 
+                className="flex flex-col gap-3 md:gap-4 cursor-pointer group"
+                onClick={() => {
+                  // THE FIX: Dynamic routing for ALL categories
+                  let slug = catName.toLowerCase().trim().replace(/ & /g, '-').replace(/ /g, '-');
+                  
+                  // Special check to make sure "Koala x Bluey" routes to "/bluey" cleanly
+                  if (slug === 'koala-x-bluey') {
+                    slug = 'bluey';
+                  }
+
+                  if (slug) {
+                    navigate(`/${slug}`);
+                  }
+                }}
+              >
+                <div className="relative w-full aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-[#e5e5e5]">
+                  {item.discount && (
+                    <div className="absolute top-3 left-3 bg-[#cbf2d6] text-[#2f2e2a] text-[10px] md:text-[12px] font-bold px-2 md:px-3 py-1 rounded-full z-10">
+                      {item.discount}
+                    </div>
+                  )}
+                  {/* Using our safe image variable & getImageUrl helper */}
+                  <img src={getImageUrl(catImage)} alt={catName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <h3 className="text-[15px] md:text-[18px] font-bold text-[#2f2e2a]">{catName}</h3>
               </div>
-              <h3 className="text-[15px] md:text-[18px] font-bold text-[#2f2e2a]">{item.title}</h3>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -107,39 +134,32 @@ export default function HeroBanner() {
 
       {/* Features Grid */}
       <section className="mx-auto w-full max-w-[1550px] px-5 md:px-9 py-12 md:py-16">
-  <h2 className="text-[24px] md:text-[32px] lg:text-[36px] font-bold text-[#2f2e2a] mb-6 md:mb-8 leading-tight">
-    Forward-thinking designs, rewriting the rules
-  </h2>
-  
-  {/* Changed to grid-cols-2 on mobile, matched gap-4 */}
-  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-    {features.map((item) => (
-      <div key={item.id} className="flex flex-col gap-3 md:gap-4 group">
+        <h2 className="text-[24px] md:text-[32px] lg:text-[36px] font-bold text-[#2f2e2a] mb-6 md:mb-8 leading-tight">
+          Forward-thinking designs, rewriting the rules
+        </h2>
         
-        {/* Matched rounded-xl md:rounded-2xl */}
-        <div className="w-full aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-[#e5e5e5]">
-          <img 
-            src={getImageUrl(item.img)} 
-            alt={item.title} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-          />
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {features.map((item) => (
+            <div key={item.id} className="flex flex-col gap-3 md:gap-4 group">
+              <div className="w-full aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-[#e5e5e5]">
+                <img 
+                  src={getImageUrl(item.img)} 
+                  alt={item.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                />
+              </div>
+              <div className="flex flex-col px-1 md:px-0">
+                <h3 className="text-[15px] md:text-[18px] font-bold text-[#2f2e2a]">
+                  {item.title}
+                </h3>
+                <p className="text-[12px] md:text-[14px] text-gray-600 mt-1">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
-        
-        <div className="flex flex-col px-1 md:px-0">
-          {/* Matched mobile text-[15px] so it fits in the 2-column layout */}
-          <h3 className="text-[15px] md:text-[18px] font-bold text-[#2f2e2a]">
-            {item.title}
-          </h3>
-          {/* Scaled down description text slightly for mobile */}
-          <p className="text-[12px] md:text-[14px] text-gray-600 mt-1">
-            {item.description}
-          </p>
-        </div>
-        
-      </div>
-    ))}
-  </div>
-</section>
+      </section>
 
       {/* Second Video Banner */}
       {modularBannerData && (
@@ -164,49 +184,39 @@ export default function HeroBanner() {
         </section>
       )}
 
-
-  
-  {/* Section Header */}
-<section className="mx-auto w-full max-w-[1500px] px-5 md:px-9 py-12 md:py-16">
-  
-  {/* Adjusted header text sizes for mobile to prevent weird wrapping */}
-  <div className="mb-6 md:mb-10">
-    <span className="text-[#2f2e2a] font-bold text-[11px] md:text-[15px] mb-2 block uppercase tracking-wider">
-      Why Koala?
-    </span>
-    <h2 className="text-[24px] md:text-[40px] font-bold text-[#2f2e2a] leading-tight">
-      For a cosy home, and a healthy planet.
-    </h2>
-  </div>
-  
-  {/* Tightened the mobile gap from 8 to 6 */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-    {impacts.map((item) => (
-      <div key={item.id} className="flex flex-col gap-3 md:gap-4 group cursor-pointer">
-        
-        {/* Matched the border radius to the previous section (xl to 2xl on md) */}
-        <div className="w-full aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-[#e5e5e5]">
-          <img 
-            src={getImageUrl(item.img)} 
-            alt={item.title} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-          />
+      {/* Section Header */}
+      <section className="mx-auto w-full max-w-[1500px] px-5 md:px-9 py-12 md:py-16">
+        <div className="mb-6 md:mb-10">
+          <span className="text-[#2f2e2a] font-bold text-[11px] md:text-[15px] mb-2 block uppercase tracking-wider">
+            Why Koala?
+          </span>
+          <h2 className="text-[24px] md:text-[40px] font-bold text-[#2f2e2a] leading-tight">
+            For a cosy home, and a healthy planet.
+          </h2>
         </div>
         
-        {/* Scaled down text to match the 'Forward-thinking' section */}
-        <div className="flex flex-col px-1 md:pr-4">
-          <h3 className="text-[15px] md:text-[18px] font-bold text-[#2f2e2a] mb-0.5 md:mb-1">
-            {item.title}
-          </h3>
-          <p className="text-[12px] md:text-[14px] text-gray-600 leading-relaxed">
-            {item.description}
-          </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+          {impacts.map((item) => (
+            <div key={item.id} className="flex flex-col gap-3 md:gap-4 group cursor-pointer">
+              <div className="w-full aspect-[4/3] rounded-xl md:rounded-2xl overflow-hidden bg-[#e5e5e5]">
+                <img 
+                  src={getImageUrl(item.img)} 
+                  alt={item.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                />
+              </div>
+              <div className="flex flex-col px-1 md:pr-4">
+                <h3 className="text-[15px] md:text-[18px] font-bold text-[#2f2e2a] mb-0.5 md:mb-1">
+                  {item.title}
+                </h3>
+                <p className="text-[12px] md:text-[14px] text-gray-600 leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
-        
-      </div>
-    ))}
-  </div>
-</section>
+      </section>
     </div>
   );
 }

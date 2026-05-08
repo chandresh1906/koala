@@ -18,30 +18,22 @@ export const CartProvider = ({ children }) => {
 
   // 2. ADD / UPDATE CART (POST / PUT)
   const addToCart = async (product, selectedVariant) => {
-    // Check if item exists by matching the exact Product ID and Color
     const existingItem = cart.find(item => 
-      item.productId === product.id && item.colorHex === selectedVariant.hex
+      String(item.productId) === String(product.id) && item.colorHex === selectedVariant.hex
     );
 
     if (existingItem) {
-      // UPDATE: Item exists, increase quantity
       const updatedItem = { ...existingItem, quantity: existingItem.quantity + 1 };
-      
-      // Update UI Instantly
-      setCart(prev => prev.map(item => item.id === existingItem.id ? updatedItem : item));
-      
-      // Update DB
       try {
-        await axios.put(`${API_URL}/cart/${existingItem.id}`, updatedItem);
+        const res = await axios.put(`${API_URL}/cart/${existingItem.id}`, updatedItem);
+        setCart(prev => prev.map(item => item.id === existingItem.id ? res.data : item));
       } catch (err) { 
         console.error("Failed to update item in DB:", err); 
       }
-      
     } else {
-      // ADD: Completely new item
-      const newItem = {
+      const newItemPayload = {
         id: `${product.id}_${selectedVariant.hex.replace('#', '')}`,
-        productId: product.id,
+        productId: String(product.id), 
         title: product.title,
         colorName: selectedVariant.colorName,
         colorHex: selectedVariant.hex,
@@ -50,12 +42,9 @@ export const CartProvider = ({ children }) => {
         quantity: 1
       };
       
-      // Update UI Instantly
-      setCart(prev => [...prev, newItem]);
-      
-      // Add to DB
       try {
-        await axios.post(`${API_URL}/cart`, newItem);
+        const res = await axios.post(`${API_URL}/cart`, newItemPayload);
+        setCart(prev => [...prev, res.data]);
       } catch (err) { 
         console.error("Failed to save item to DB:", err); 
       }
@@ -65,12 +54,8 @@ export const CartProvider = ({ children }) => {
   };
 
   // 3. REMOVE FROM CART (DELETE)
-  // We now use the exact `id` passed from the CartDrawer. No guessing!
   const removeFromCart = async (id, colorHex) => {
-    // Update UI Instantly
     setCart(prev => prev.filter(item => item.id !== id));
-    
-    // Delete from DB
     try {
       await axios.delete(`${API_URL}/cart/${id}`);
     } catch (err) { 
@@ -87,19 +72,28 @@ export const CartProvider = ({ children }) => {
 
     if (newQty > 0) {
       const updatedItem = { ...item, quantity: newQty };
-      
-      // Update UI Instantly
       setCart(prev => prev.map(i => i.id === id ? updatedItem : i));
-      
-      // Update DB
       try {
         await axios.put(`${API_URL}/cart/${id}`, updatedItem);
       } catch (err) { 
         console.error("Failed to update quantity in DB:", err); 
       }
     } else {
-      // If quantity is 0, completely delete it
       removeFromCart(id, colorHex);
+    }
+  };
+
+  // 5. THE NEW FEATURE: CLEAR CART AFTER SUCCESSFUL PAYMENT
+  const clearCart = async () => {
+    const itemsToDelete = [...cart];
+    // Instantly empty the UI so the user sees a clean slate
+    setCart([]); 
+    
+    // JSON server requires deleting items one by one
+    try {
+      await Promise.all(itemsToDelete.map(item => axios.delete(`${API_URL}/cart/${item.id}`)));
+    } catch (err) {
+      console.error("Failed to clear cart in DB:", err);
     }
   };
 
@@ -107,7 +101,10 @@ export const CartProvider = ({ children }) => {
   const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, cartCount, cartTotal, isCartOpen, setIsCartOpen }}>
+    <CartContext.Provider value={{ 
+      cart, addToCart, removeFromCart, updateQuantity, clearCart, 
+      cartCount, cartTotal, isCartOpen, setIsCartOpen 
+    }}>
       {children}
     </CartContext.Provider>
   );

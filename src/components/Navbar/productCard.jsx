@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Added onClick to the props
 function ProductCard({ title, img, discount, onClick }) {
   const getImageUrl = (imgString) => {
     if (!imgString) return '';
@@ -9,11 +8,10 @@ function ProductCard({ title, img, discount, onClick }) {
   };
 
   return (
-    // Attached onClick here
     <div onClick={onClick} className="flex flex-col items-center gap-3 cursor-pointer group/card">
-      <div className="w-full bg-white border border-[#e5e5e5] rounded-[10px] flex flex-col items-center p-4 min-h-[200px] justify-center">
+      <div className="w-full bg-white border border-[#e5e5e5] rounded-[10px] flex flex-col items-center p-4 min-h-[200px] justify-center relative">
         {discount && (
-          <div className="self-start mb-2 bg-[#cbf2d6] text-[#2f2e2a] text-[11px] font-bold px-2 py-1 rounded-full">
+          <div className="absolute top-3 left-3 bg-[#cbf2d6] text-[#2f2e2a] text-[11px] font-bold px-2 py-1 rounded-full z-10">
             {discount}
           </div>
         )}

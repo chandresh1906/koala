@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useCurrency } from "../../context/CurrencyContext";
+
+// Create a mapping of currencies to their flags and names
+const COUNTRY_INFO = {
+  AUD: { flag: "https://flagcdn.com/w40/au.png", name: "Australia" },
+  USD: { flag: "https://flagcdn.com/w40/us.png", name: "United States" },
+  JPY: { flag: "https://flagcdn.com/w40/jp.png", name: "Japan" }
+};
 
 export default function TopOfferBar() {
   const targetDate = new Date("2026-04-10T23:59:59").getTime();
@@ -7,6 +15,9 @@ export default function TopOfferBar() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
   const [aboutOpen, setAboutOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
+  
+  // Grab BOTH currency and setCurrency from our context
+  const { currency, setCurrency } = useCurrency();
 
   function getTimeLeft() {
     const now = new Date().getTime();
@@ -31,11 +42,16 @@ export default function TopOfferBar() {
     return () => clearInterval(timer);
   }, []);
 
+  const handleCurrencyChange = (currencyCode) => {
+    setCurrency(currencyCode);
+    setCountryOpen(false); 
+  };
+
   return (
     <div className="w-full bg-[#c8e8c9] text-[#4c4b3f] text-sm relative z-50">
       <div className="relative flex h-12 md:h-13 items-center justify-center md:justify-between px-4 md:px-9">
         
-        {/* About Dropdown Wrapper - Hidden on Mobile */}
+        {/* About Dropdown */}
         <div 
           className="absolute left-9 top-0 h-full hidden sm:flex items-center"
           onMouseEnter={() => setAboutOpen(true)}
@@ -57,10 +73,9 @@ export default function TopOfferBar() {
           )}
         </div>
 
-        {/* Center Countdown - Responsive Text */}
+        {/* Center Countdown */}
         <div className="flex items-center justify-center gap-2 md:gap-3 font-medium text-[11px] sm:text-[13px] md:text-sm text-center w-full md:w-auto md:absolute md:left-1/2 md:-translate-x-1/2">
           <span>Up to 30% off + EXTRA $100 off ends</span>
-
           <div className="hidden lg:flex items-center gap-1.5">
             <TimeBox value={timeLeft.days} label="D" />
             <TimeBox value={timeLeft.hours} label="H" />
@@ -69,7 +84,7 @@ export default function TopOfferBar() {
           </div>
         </div>
 
-        {/* Right Side Links & Country Dropdown - Hidden on Mobile */}
+        {/* Right Side Links & Country Dropdown */}
         <div className="absolute right-9 top-0 h-full hidden sm:flex items-center gap-8 font-medium">
           <a href="#" className="hover:text-black transition hidden lg:block">FAQs</a>
           <a href="#" className="hover:text-black transition hidden lg:block">Trade</a>
@@ -81,15 +96,20 @@ export default function TopOfferBar() {
             onMouseLeave={() => setCountryOpen(false)}
           >
             <button className="flex items-center gap-2 cursor-pointer h-full">
-              <img src="https://flagcdn.com/w40/au.png" alt="Australia" className="h-3.5 w-5.5 object-cover" />
+              {/* THE UPGRADE: The image source is now dynamic based on the active currency! */}
+              <img 
+                src={COUNTRY_INFO[currency].flag} 
+                alt={COUNTRY_INFO[currency].name} 
+                className="h-3.5 w-5.5 object-cover rounded-[2px]" 
+              />
               {countryOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
 
             {countryOpen && (
               <div className="absolute right-0 top-full w-64 rounded-xl border border-[#e7e7e2] bg-white shadow-lg overflow-hidden">
-                <CountryItem flag="https://flagcdn.com/w40/au.png" country="Australia" currency="AUD $" />
-                <CountryItem flag="https://flagcdn.com/w40/us.png" country="United States" currency="USD $" />
-                <CountryItem flag="https://flagcdn.com/w40/jp.png" country="Japan" currency="JPY 円" />
+                <CountryItem flag={COUNTRY_INFO.AUD.flag} country="Australia" currency="AUD $" onClick={() => handleCurrencyChange('AUD')} />
+                <CountryItem flag={COUNTRY_INFO.USD.flag} country="United States" currency="USD $" onClick={() => handleCurrencyChange('USD')} />
+                <CountryItem flag={COUNTRY_INFO.JPY.flag} country="Japan" currency="JPY 円" onClick={() => handleCurrencyChange('JPY')} />
               </div>
             )}
           </div>
@@ -130,9 +150,9 @@ function AnimatedDigit({ value }) {
   );
 }
 
-function CountryItem({ flag, country, currency }) {
+function CountryItem({ flag, country, currency, onClick }) {
   return (
-    <div className="flex cursor-pointer items-center justify-between border-b border-[#f1f1eb] px-5 py-4 hover:bg-[#f7f7f3] last:border-b-0">
+    <div onClick={onClick} className="flex cursor-pointer items-center justify-between border-b border-[#f1f1eb] px-5 py-4 hover:bg-[#f7f7f3] last:border-b-0">
       <div className="flex items-center gap-3">
         <img src={flag} alt={country} className="h-4 w-6 md:h-4.5 md:w-7 rounded-sm object-cover" />
         <span className="text-sm text-[#2e2e2a]">{country}</span>
